@@ -1,0 +1,18 @@
+query AllTodos {
+  allTodos {
+    edges {
+      node {
+        id
+        title
+        description
+        complete
+        createdAt {
+          seconds
+        }
+        completedAt {
+          seconds
+        }
+      }
+    }
+  }
+}
