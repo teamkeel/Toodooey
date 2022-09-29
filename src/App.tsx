@@ -4,14 +4,24 @@ import { Todos } from "./components/Todos";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
-  const [endpoint, setEndpoint] = useState("");
+  const [params, setParams] = useState(
+    new URLSearchParams(document.location.search)
+  );
+
+  const setParam = (value: string) => {
+    params.set("e", value);
+    window.history.replaceState({}, "", `${location.pathname}?${params}`);
+    setParams(new URLSearchParams(document.location.search));
+  };
+
+  let endpoint = params.get("e");
 
   return (
     <div className="flex h-full flex-col items-center">
       {endpoint ? (
         <>
           <div className="p-5 w-full flex items-start">
-            <Button onClick={() => setEndpoint("")}>Set API URL</Button>
+            <Button onClick={() => setParam("")}>Set API URL</Button>
           </div>
           <Todos endpoint={endpoint} />
         </>
@@ -56,7 +66,7 @@ function App() {
                   hover:border-gray-400 
                   "
                 />
-                <Button onClick={() => setEndpoint(inputValue)}>Set URL</Button>
+                <Button onClick={() => setParam(inputValue)}>Set URL</Button>
               </div>
             </div>
           </div>
