@@ -26,11 +26,7 @@ export const Todos = (props: { endpoint: string }) => {
         ))}
       {todos.data?.allTodos.edges
         .filter((a) => a.node.complete)
-        .sort((a, b) =>
-          a.node.completedAt && b.node.completedAt
-            ? b.node.completedAt.seconds - a.node.completedAt.seconds
-            : a.node.createdAt.seconds - b.node.createdAt.seconds
-        )
+        .sort((a, b) => a.node.createdAt.seconds - b.node.createdAt.seconds)
         .map((d) => (
           <Todo
             client={client}

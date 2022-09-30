@@ -195,7 +195,7 @@ export type UpdateTodoValuesInput = {
 export type AllTodosQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllTodosQuery = { __typename?: 'Query', allTodos: { __typename?: 'TodoConnection', edges: Array<{ __typename?: 'TodoEdge', node: { __typename?: 'Todo', id: string, title: string, description?: string | null, complete: boolean, createdAt: { __typename?: 'Timestamp', seconds: number }, completedAt?: { __typename?: 'Timestamp', seconds: number } | null } }> } };
+export type AllTodosQuery = { __typename?: 'Query', allTodos: { __typename?: 'TodoConnection', edges: Array<{ __typename?: 'TodoEdge', node: { __typename?: 'Todo', id: string, title: string, description?: string | null, complete: boolean, createdAt: { __typename?: 'Timestamp', seconds: number } } }> } };
 
 export type CreateTodoMutationVariables = Exact<{
   input: CreateTodoInput;
@@ -236,9 +236,6 @@ export const AllTodosDocument = `
         description
         complete
         createdAt {
-          seconds
-        }
-        completedAt {
           seconds
         }
       }

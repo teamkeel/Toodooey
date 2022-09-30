@@ -9,9 +9,6 @@ query AllTodos {
         createdAt {
           seconds
         }
-        completedAt {
-          seconds
-        }
       }
     }
   }
