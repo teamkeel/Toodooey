@@ -1,19 +1,19 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 import {
   useSetCompleteMutation,
   useDeleteTodoMutation,
   useUpdateTodoMutation,
+  AllTodosQuery,
 } from "../graphql/generated";
+
+type Todo = AllTodosQuery["allTodos"]["edges"][0]["node"];
 
 export const Todo = (
   props: PropsWithChildren & {
+    todo: Todo;
     client: GraphQLClient;
-    id: string;
-    complete?: boolean;
-    title: string;
-    description?: string;
   }
 ) => {
   const q = useQueryClient();
@@ -30,42 +30,55 @@ export const Todo = (
   });
 
   const update = useUpdateTodoMutation(props.client);
+  // const [title, setTitle] = useState(props.todo.title);
+  // const [description, setDescription] = useState(
+  //   props.todo.description ? props.todo.description : ""
+  // );
 
-  const [title, setTitle] = useState(props.title);
-  const [description, setDescription] = useState(props.description);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleChange = () => {
-    update.mutate({
-      input: {
-        where: {
-          id: props.id,
+    const form = formRef.current;
+    if (form) {
+      const formData = new FormData(form);
+      let values: {
+        [key: string]: string;
+      } = {};
+      for (const [key, value] of formData) {
+        values[key] = value as string;
+      }
+
+      update.mutate({
+        input: {
+          where: {
+            id: props.todo.id,
+          },
+          values: {
+            ...values,
+          },
         },
-        values: {
-          title: title,
-          description: description,
-        },
-      },
-    });
+      });
+    }
   };
 
   return (
     <div
       className={`bg-white w-full py-3 px-4 rounded-md border border-gray-300 shadow-md shadow-gray-200 flex items-center gap-3 ${
-        props.complete && "opacity-50"
+        props.todo.complete && "opacity-50"
       }`}
     >
       <div
         className={`h-6 aspect-square border-2 border-grey-500 hover:border-purple-500 hover:cursor-pointer rounded-full flex justify-center items-center ${
-          props.complete && "bg-purple-500 border-0"
+          props.todo.complete && "bg-purple-500 border-0"
         } `}
         onClick={() =>
           complete.mutate({
             input: {
               where: {
-                id: props.id,
+                id: props.todo.id,
               },
               values: {
-                complete: !props.complete,
+                complete: !props.todo.complete,
               },
             },
           })
@@ -87,22 +100,29 @@ export const Todo = (
         </svg>
       </div>
       <div className="w-full">
-        <input
-          className="px-1 focus:outline-purple-300 bg-transparent w-full"
-          placeholder="Add a title..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onBlur={() => handleChange()}
-          disabled={props.complete}
-        />
-        <input
-          className="text-gray-500 px-1 bg-transparent focus:outline-purple-300 w-full placeholder:text-gray-400"
-          placeholder="Add a description..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          onBlur={() => handleChange()}
-          disabled={props.complete}
-        />
+        <form ref={formRef}>
+          {(Object.keys(props.todo) as Array<keyof typeof props.todo>)
+            .filter(
+              (a) => !["complete", "__typename", "createdAt", "id"].includes(a)
+            )
+            .sort((a, b) => (a == "title" ? -1 : 1))
+            .map((k) => {
+              const v = props.todo[k];
+              return (
+                <input
+                  key={k}
+                  className={`px-1 focus:outline-purple-300 bg-transparent w-full capitalize ${
+                    k == "title" ? undefined : "text-gray-500"
+                  }`}
+                  placeholder={k}
+                  defaultValue={v as string}
+                  name={k}
+                  onBlur={() => handleChange()}
+                  disabled={props.todo.complete}
+                />
+              );
+            })}
+        </form>
       </div>
       <a
         href="#"
@@ -110,7 +130,7 @@ export const Todo = (
         onClick={() => {
           deleteTodo.mutate({
             input: {
-              id: props.id,
+              id: props.todo.id,
             },
           });
         }}

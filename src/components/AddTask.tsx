@@ -1,20 +1,22 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
-import { useState, useEffect } from "react";
-import { useCreateTodoMutation } from "../graphql/generated";
+import { useState, useEffect, useRef } from "react";
+import {
+  useCreateTodoMutation,
+  CreateTodoMutationVariables,
+} from "../graphql/generated";
 
 export const AddTask = (props: { client: GraphQLClient }) => {
   const q = useQueryClient();
   const create = useCreateTodoMutation(props.client, {
     onSuccess: () => {
       q.refetchQueries(["AllTodos"]);
-      setTitle("");
-      setDescription("");
     },
   });
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  // const [title, setTitle] = useState("");
+  // const [description, setDescription] = useState("");
+  // const [more, setMore] = useState("");
 
   const keyDown = (e: KeyboardEvent) => {
     if (e.key == "Enter" && e.metaKey) {
@@ -22,13 +24,32 @@ export const AddTask = (props: { client: GraphQLClient }) => {
     }
   };
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   const handleCreate = () => {
-    create.mutate({
-      input: {
-        title: title,
-        description: description,
-      },
-    });
+    const form = formRef.current;
+    if (form) {
+      const formData = new FormData(form);
+      let values: {
+        [key: string]: string;
+      } = {};
+      for (const [key, value] of formData) {
+        values[key] = value as string;
+      }
+
+      create.mutate(
+        {
+          input: {
+            ...(values as CreateTodoMutationVariables["input"]),
+          },
+        },
+        {
+          onSuccess: () => {
+            form.reset();
+          },
+        }
+      );
+    }
   };
 
   useEffect(() => {
@@ -59,18 +80,18 @@ export const AddTask = (props: { client: GraphQLClient }) => {
       </svg>
 
       <div className="w-full">
-        <input
-          className="px-1 focus:outline-purple-300 bg-transparent w-full"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          className="text-gray-500 px-1 bg-transparent focus:outline-purple-300 w-full"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <form ref={formRef}>
+          <input
+            className="px-1 focus:outline-purple-300 bg-transparent w-full"
+            placeholder="Title"
+            name="title"
+          />
+          <input
+            className="text-gray-500 px-1 bg-transparent focus:outline-purple-300 w-full"
+            placeholder="Description"
+            name="description"
+          />
+        </form>
       </div>
     </div>
   );

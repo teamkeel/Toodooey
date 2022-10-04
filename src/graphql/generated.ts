@@ -154,7 +154,6 @@ export type TimestampFormattedArgs = {
 export type Todo = {
   __typename?: 'Todo';
   complete: Scalars['Boolean'];
-  completedAt?: Maybe<Timestamp>;
   createdAt: Timestamp;
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];

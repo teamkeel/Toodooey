@@ -15,27 +15,13 @@ export const Todos = (props: { endpoint: string }) => {
         .filter((a) => !a.node.complete)
         .sort((a, b) => a.node.createdAt.seconds - b.node.createdAt.seconds)
         .map((d) => (
-          <Todo
-            client={client}
-            key={d.node.id}
-            id={d.node.id}
-            title={d.node.title}
-            description={d.node.description ? d.node.description : ""}
-            complete={d.node.complete}
-          />
+          <Todo client={client} todo={d.node} key={d.node.id} />
         ))}
       {todos.data?.allTodos.edges
         .filter((a) => a.node.complete)
         .sort((a, b) => a.node.createdAt.seconds - b.node.createdAt.seconds)
         .map((d) => (
-          <Todo
-            client={client}
-            key={d.node.id}
-            id={d.node.id}
-            title={d.node.title}
-            description={d.node.description ? d.node.description : ""}
-            complete={d.node.complete}
-          />
+          <Todo client={client} todo={d.node} key={d.node.id} />
         ))}
     </div>
   );
