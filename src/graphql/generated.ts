@@ -49,8 +49,12 @@ export type BooleanQueryInput = {
   equals?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CompletedTodosInput = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+};
+
 export type CreateTodoInput = {
-  description?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -61,6 +65,14 @@ export type DeleteResponse = {
 
 export type DeleteTodoInput = {
   id: Scalars['ID'];
+};
+
+export type Identity = {
+  __typename?: 'Identity';
+  createdAt: Timestamp;
+  email: Scalars['String'];
+  id: Scalars['ID'];
+  updatedAt: Timestamp;
 };
 
 export type Mutation = {
@@ -108,12 +120,18 @@ export type PageInfo = {
 export type Query = {
   __typename?: 'Query';
   allTodos: TodoConnection;
+  completedTodos: TodoConnection;
   todo?: Maybe<Todo>;
 };
 
 
 export type QueryAllTodosArgs = {
   input?: InputMaybe<AllTodosInput>;
+};
+
+
+export type QueryCompletedTodosArgs = {
+  input?: InputMaybe<CompletedTodosInput>;
 };
 
 
@@ -154,9 +172,11 @@ export type TimestampFormattedArgs = {
 export type Todo = {
   __typename?: 'Todo';
   complete: Scalars['Boolean'];
+  completedAt?: Maybe<Timestamp>;
   createdAt: Timestamp;
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  owner?: Maybe<Identity>;
   title: Scalars['String'];
   updatedAt: Timestamp;
 };
@@ -186,7 +206,6 @@ export type UpdateTodoQueryInput = {
 };
 
 export type UpdateTodoValuesInput = {
-  complete?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
 };
@@ -195,6 +214,14 @@ export type AllTodosQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AllTodosQuery = { __typename?: 'Query', allTodos: { __typename?: 'TodoConnection', edges: Array<{ __typename?: 'TodoEdge', node: { __typename?: 'Todo', id: string, title: string, description?: string | null, complete: boolean, createdAt: { __typename?: 'Timestamp', seconds: number } } }> } };
+
+export type AuthenticateMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type AuthenticateMutation = { __typename?: 'Mutation', authenticate?: { __typename?: 'AuthenticateResponse', token?: string | null } | null };
 
 export type CreateTodoMutationVariables = Exact<{
   input: CreateTodoInput;
@@ -254,6 +281,28 @@ export const useAllTodosQuery = <
     useQuery<AllTodosQuery, TError, TData>(
       variables === undefined ? ['AllTodos'] : ['AllTodos', variables],
       fetcher<AllTodosQuery, AllTodosQueryVariables>(client, AllTodosDocument, variables, headers),
+      options
+    );
+export const AuthenticateDocument = `
+    mutation authenticate($email: String!, $password: String!) {
+  authenticate(
+    input: {emailPassword: {email: $email, password: $password}, createIfNotExists: true}
+  ) {
+    token
+  }
+}
+    `;
+export const useAuthenticateMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<AuthenticateMutation, TError, AuthenticateMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<AuthenticateMutation, TError, AuthenticateMutationVariables, TContext>(
+      ['authenticate'],
+      (variables?: AuthenticateMutationVariables) => fetcher<AuthenticateMutation, AuthenticateMutationVariables>(client, AuthenticateDocument, variables, headers)(),
       options
     );
 export const CreateTodoDocument = `

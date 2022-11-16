@@ -3,8 +3,9 @@ import { useAllTodosQuery } from "../graphql/generated";
 import { AddTask } from "./AddTask";
 import { Todo } from "./Todo";
 
-export const Todos = (props: { endpoint: string }) => {
+export const ListTodos = (props: { endpoint: string; token: string }) => {
   const client = new GraphQLClient(props.endpoint);
+  client.setHeader("Authorization", "Bearer " + props.token);
   const todos = useAllTodosQuery(client);
 
   return (
