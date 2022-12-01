@@ -1,0 +1,10 @@
+query listProjects {
+  listProjects {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}

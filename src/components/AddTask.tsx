@@ -6,7 +6,10 @@ import {
   CreateTodoMutationVariables,
 } from "../graphql/generated";
 
-export const AddTask = (props: { client: GraphQLClient }) => {
+export const AddTask = (props: {
+  client: GraphQLClient;
+  activeProject: string | null | undefined;
+}) => {
   const q = useQueryClient();
   const create = useCreateTodoMutation(props.client, {
     onSuccess: () => {
@@ -41,6 +44,7 @@ export const AddTask = (props: { client: GraphQLClient }) => {
         {
           input: {
             ...(values as CreateTodoMutationVariables["input"]),
+            projectId: props.activeProject,
           },
         },
         {

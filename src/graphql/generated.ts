@@ -20,13 +20,16 @@ export type Scalars = {
 };
 
 export type AllTodosInput = {
+  /** The ID cursor to retrieve nodes after in the connection. Typically, you should pass the endCursor of the previous page as after. */
   after?: InputMaybe<Scalars['String']>;
+  /** The requested number of nodes for each page. */
   first?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<AllTodosQueryInput>;
 };
 
 export type AllTodosQueryInput = {
   complete?: InputMaybe<BooleanQueryInput>;
+  projectId?: InputMaybe<IdQueryInput>;
 };
 
 export type AuthenticateEmailPasswordInput = {
@@ -49,13 +52,18 @@ export type BooleanQueryInput = {
   equals?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CompletedTodosInput = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
+export type CreateProjectInput = {
+  title: Scalars['String'];
 };
 
 export type CreateTodoInput = {
+  description?: InputMaybe<Scalars['String']>;
+  projectId?: InputMaybe<Scalars['ID']>;
   title: Scalars['String'];
+};
+
+export type DeleteProjectInput = {
+  id: Scalars['ID'];
 };
 
 export type DeleteResponse = {
@@ -67,6 +75,15 @@ export type DeleteTodoInput = {
   id: Scalars['ID'];
 };
 
+export type GetProjectInput = {
+  id: Scalars['ID'];
+};
+
+export type IdQueryInput = {
+  equals?: InputMaybe<Scalars['ID']>;
+  oneOf?: InputMaybe<Array<Scalars['ID']>>;
+};
+
 export type Identity = {
   __typename?: 'Identity';
   createdAt: Timestamp;
@@ -75,12 +92,22 @@ export type Identity = {
   updatedAt: Timestamp;
 };
 
+export type ListProjectsInput = {
+  /** The ID cursor to retrieve nodes after in the connection. Typically, you should pass the endCursor of the previous page as after. */
+  after?: InputMaybe<Scalars['String']>;
+  /** The requested number of nodes for each page. */
+  first?: InputMaybe<Scalars['Int']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   authenticate?: Maybe<AuthenticateResponse>;
+  createProject: Project;
   createTodo: Todo;
+  deleteProject?: Maybe<DeleteResponse>;
   deleteTodo?: Maybe<DeleteResponse>;
   setCompletion: Todo;
+  updateProject: Project;
   updateTodo: Todo;
 };
 
@@ -90,8 +117,18 @@ export type MutationAuthenticateArgs = {
 };
 
 
+export type MutationCreateProjectArgs = {
+  input: CreateProjectInput;
+};
+
+
 export type MutationCreateTodoArgs = {
   input: CreateTodoInput;
+};
+
+
+export type MutationDeleteProjectArgs = {
+  input: DeleteProjectInput;
 };
 
 
@@ -105,22 +142,63 @@ export type MutationSetCompletionArgs = {
 };
 
 
+export type MutationUpdateProjectArgs = {
+  input: UpdateProjectInput;
+};
+
+
 export type MutationUpdateTodoArgs = {
   input: UpdateTodoInput;
 };
 
 export type PageInfo = {
   __typename?: 'PageInfo';
+  /** The ID cursor of the last node on the current page. */
   endCursor: Scalars['String'];
+  /** Whether there are results after the current page. */
   hasNextPage: Scalars['Boolean'];
+  /** The ID cursor of the first node on the current page. */
   startCursor: Scalars['String'];
+  /** Total count of nodes on the current page. */
   totalCount: Scalars['Int'];
+};
+
+export type Project = {
+  __typename?: 'Project';
+  createdAt: Timestamp;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  owner: Identity;
+  ownerId: Scalars['ID'];
+  tasks: TodoConnection;
+  title: Scalars['String'];
+  updatedAt: Timestamp;
+};
+
+
+export type ProjectTasksArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type ProjectConnection = {
+  __typename?: 'ProjectConnection';
+  edges: Array<ProjectEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ProjectEdge = {
+  __typename?: 'ProjectEdge';
+  node: Project;
 };
 
 export type Query = {
   __typename?: 'Query';
   allTodos: TodoConnection;
-  completedTodos: TodoConnection;
+  getProject?: Maybe<Project>;
+  listProjects: ProjectConnection;
   todo?: Maybe<Todo>;
 };
 
@@ -130,8 +208,13 @@ export type QueryAllTodosArgs = {
 };
 
 
-export type QueryCompletedTodosArgs = {
-  input?: InputMaybe<CompletedTodosInput>;
+export type QueryGetProjectArgs = {
+  input: GetProjectInput;
+};
+
+
+export type QueryListProjectsArgs = {
+  input?: InputMaybe<ListProjectsInput>;
 };
 
 
@@ -176,7 +259,10 @@ export type Todo = {
   createdAt: Timestamp;
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  owner?: Maybe<Identity>;
+  owner: Identity;
+  ownerId: Scalars['ID'];
+  project?: Maybe<Project>;
+  projectId?: Maybe<Scalars['ID']>;
   title: Scalars['String'];
   updatedAt: Timestamp;
 };
@@ -196,6 +282,20 @@ export type TodoInput = {
   id: Scalars['ID'];
 };
 
+export type UpdateProjectInput = {
+  values: UpdateProjectValuesInput;
+  where: UpdateProjectQueryInput;
+};
+
+export type UpdateProjectQueryInput = {
+  id: Scalars['ID'];
+};
+
+export type UpdateProjectValuesInput = {
+  description: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type UpdateTodoInput = {
   values: UpdateTodoValuesInput;
   where: UpdateTodoQueryInput;
@@ -207,13 +307,16 @@ export type UpdateTodoQueryInput = {
 
 export type UpdateTodoValuesInput = {
   description?: InputMaybe<Scalars['String']>;
+  projectId?: InputMaybe<Scalars['ID']>;
   title?: InputMaybe<Scalars['String']>;
 };
 
-export type AllTodosQueryVariables = Exact<{ [key: string]: never; }>;
+export type AllTodosQueryVariables = Exact<{
+  input?: InputMaybe<AllTodosInput>;
+}>;
 
 
-export type AllTodosQuery = { __typename?: 'Query', allTodos: { __typename?: 'TodoConnection', edges: Array<{ __typename?: 'TodoEdge', node: { __typename?: 'Todo', id: string, title: string, description?: string | null, complete: boolean, createdAt: { __typename?: 'Timestamp', seconds: number } } }> } };
+export type AllTodosQuery = { __typename?: 'Query', allTodos: { __typename?: 'TodoConnection', edges: Array<{ __typename?: 'TodoEdge', node: { __typename?: 'Todo', id: string, title: string, description?: string | null, complete: boolean, project?: { __typename?: 'Project', id: string, title: string } | null, createdAt: { __typename?: 'Timestamp', seconds: number, fromNow: string }, completedAt?: { __typename?: 'Timestamp', seconds: number, fromNow: string } | null } }> } };
 
 export type AuthenticateMutationVariables = Exact<{
   email: Scalars['String'];
@@ -223,6 +326,13 @@ export type AuthenticateMutationVariables = Exact<{
 
 export type AuthenticateMutation = { __typename?: 'Mutation', authenticate?: { __typename?: 'AuthenticateResponse', token?: string | null } | null };
 
+export type CreateProjectMutationVariables = Exact<{
+  input: CreateProjectInput;
+}>;
+
+
+export type CreateProjectMutation = { __typename?: 'Mutation', createProject: { __typename?: 'Project', id: string } };
+
 export type CreateTodoMutationVariables = Exact<{
   input: CreateTodoInput;
 }>;
@@ -230,12 +340,24 @@ export type CreateTodoMutationVariables = Exact<{
 
 export type CreateTodoMutation = { __typename?: 'Mutation', createTodo: { __typename?: 'Todo', id: string, title: string, complete: boolean } };
 
+export type DeleteProjectMutationVariables = Exact<{
+  input: DeleteProjectInput;
+}>;
+
+
+export type DeleteProjectMutation = { __typename?: 'Mutation', deleteProject?: { __typename?: 'DeleteResponse', success: boolean } | null };
+
 export type DeleteTodoMutationVariables = Exact<{
   input: DeleteTodoInput;
 }>;
 
 
 export type DeleteTodoMutation = { __typename?: 'Mutation', deleteTodo?: { __typename?: 'DeleteResponse', success: boolean } | null };
+
+export type ListProjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListProjectsQuery = { __typename?: 'Query', listProjects: { __typename?: 'ProjectConnection', edges: Array<{ __typename?: 'ProjectEdge', node: { __typename?: 'Project', id: string, title: string } }> } };
 
 export type SetCompleteMutationVariables = Exact<{
   input: SetCompletionInput;
@@ -253,16 +375,25 @@ export type UpdateTodoMutation = { __typename?: 'Mutation', updateTodo: { __type
 
 
 export const AllTodosDocument = `
-    query AllTodos {
-  allTodos {
+    query AllTodos($input: AllTodosInput) {
+  allTodos(input: $input) {
     edges {
       node {
         id
         title
         description
         complete
+        project {
+          id
+          title
+        }
         createdAt {
           seconds
+          fromNow
+        }
+        completedAt {
+          seconds
+          fromNow
         }
       }
     }
@@ -305,6 +436,26 @@ export const useAuthenticateMutation = <
       (variables?: AuthenticateMutationVariables) => fetcher<AuthenticateMutation, AuthenticateMutationVariables>(client, AuthenticateDocument, variables, headers)(),
       options
     );
+export const CreateProjectDocument = `
+    mutation createProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
+    id
+  }
+}
+    `;
+export const useCreateProjectMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<CreateProjectMutation, TError, CreateProjectMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<CreateProjectMutation, TError, CreateProjectMutationVariables, TContext>(
+      ['createProject'],
+      (variables?: CreateProjectMutationVariables) => fetcher<CreateProjectMutation, CreateProjectMutationVariables>(client, CreateProjectDocument, variables, headers)(),
+      options
+    );
 export const CreateTodoDocument = `
     mutation createTodo($input: CreateTodoInput!) {
   createTodo(input: $input) {
@@ -327,6 +478,26 @@ export const useCreateTodoMutation = <
       (variables?: CreateTodoMutationVariables) => fetcher<CreateTodoMutation, CreateTodoMutationVariables>(client, CreateTodoDocument, variables, headers)(),
       options
     );
+export const DeleteProjectDocument = `
+    mutation deleteProject($input: DeleteProjectInput!) {
+  deleteProject(input: $input) {
+    success
+  }
+}
+    `;
+export const useDeleteProjectMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<DeleteProjectMutation, TError, DeleteProjectMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<DeleteProjectMutation, TError, DeleteProjectMutationVariables, TContext>(
+      ['deleteProject'],
+      (variables?: DeleteProjectMutationVariables) => fetcher<DeleteProjectMutation, DeleteProjectMutationVariables>(client, DeleteProjectDocument, variables, headers)(),
+      options
+    );
 export const DeleteTodoDocument = `
     mutation deleteTodo($input: DeleteTodoInput!) {
   deleteTodo(input: $input) {
@@ -345,6 +516,32 @@ export const useDeleteTodoMutation = <
     useMutation<DeleteTodoMutation, TError, DeleteTodoMutationVariables, TContext>(
       ['deleteTodo'],
       (variables?: DeleteTodoMutationVariables) => fetcher<DeleteTodoMutation, DeleteTodoMutationVariables>(client, DeleteTodoDocument, variables, headers)(),
+      options
+    );
+export const ListProjectsDocument = `
+    query listProjects {
+  listProjects {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}
+    `;
+export const useListProjectsQuery = <
+      TData = ListProjectsQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: ListProjectsQueryVariables,
+      options?: UseQueryOptions<ListProjectsQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<ListProjectsQuery, TError, TData>(
+      variables === undefined ? ['listProjects'] : ['listProjects', variables],
+      fetcher<ListProjectsQuery, ListProjectsQueryVariables>(client, ListProjectsDocument, variables, headers),
       options
     );
 export const SetCompleteDocument = `

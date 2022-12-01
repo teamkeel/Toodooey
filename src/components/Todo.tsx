@@ -6,6 +6,7 @@ import {
   useDeleteTodoMutation,
   useUpdateTodoMutation,
   AllTodosQuery,
+  ListProjectsQuery,
 } from "../graphql/generated";
 
 type Todo = AllTodosQuery["allTodos"]["edges"][0]["node"];
@@ -14,6 +15,7 @@ export const Todo = (
   props: PropsWithChildren & {
     todo: Todo;
     client: GraphQLClient;
+    projects?: ListProjectsQuery;
   }
 ) => {
   const q = useQueryClient();
@@ -24,12 +26,16 @@ export const Todo = (
   });
 
   const deleteTodo = useDeleteTodoMutation(props.client, {
-    onSuccess: () => {
+    onSettled: () => {
       q.refetchQueries(["AllTodos"]);
     },
   });
 
-  const update = useUpdateTodoMutation(props.client);
+  const update = useUpdateTodoMutation(props.client, {
+    onSuccess: () => {
+      q.refetchQueries(["AllTodos"]);
+    },
+  });
   // const [title, setTitle] = useState(props.todo.title);
   // const [description, setDescription] = useState(
   //   props.todo.description ? props.todo.description : ""
@@ -101,32 +107,70 @@ export const Todo = (
       </div>
       <div className="w-full">
         <form ref={formRef}>
-          {(Object.keys(props.todo) as Array<keyof typeof props.todo>)
-            .filter(
-              (a) => !["complete", "__typename", "createdAt", "id"].includes(a)
-            )
-            .sort((a, b) => (a == "title" ? -1 : 1))
-            .map((k) => {
-              const v = props.todo[k];
-              return (
-                <input
-                  key={k}
-                  className={`px-1 focus:outline-purple-300 bg-transparent w-full capitalize ${
-                    k == "title" ? undefined : "text-gray-500"
-                  }`}
-                  placeholder={k}
-                  defaultValue={v as string}
-                  name={k}
-                  onBlur={() => handleChange()}
-                  disabled={props.todo.complete}
-                />
-              );
-            })}
+          <div className="flex">
+            <div className="flex-1">
+              {(Object.keys(props.todo) as Array<keyof typeof props.todo>)
+                .filter(
+                  (a) =>
+                    !["complete", "__typename", "createdAt", "id"].includes(a)
+                )
+                .filter((a) => typeof props.todo[a] != "object")
+                .sort((a, b) => (a == "title" ? -1 : 1))
+                .map((k) => {
+                  const v = props.todo[k];
+                  return (
+                    <input
+                      key={k}
+                      className={`px-1 focus:outline-purple-300 bg-transparent w-full capitalize ${
+                        k == "title" ? undefined : "text-gray-500"
+                      }`}
+                      placeholder={k}
+                      defaultValue={v as string}
+                      name={k}
+                      onBlur={() => handleChange()}
+                      disabled={props.todo.complete}
+                    />
+                  );
+                })}
+            </div>
+            <select
+              name="projectId"
+              onChange={() => handleChange()}
+              className="pr-1 mt-1 self-center text-gray-400"
+              disabled={props.todo.complete}
+            >
+              <option value={undefined}>None</option>
+              {props.projects?.listProjects.edges.map((p) => (
+                <option
+                  selected={props.todo.project?.id == p.node.id}
+                  value={p.node.id}
+                >
+                  #{p.node.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {props.todo.complete && props.todo.completedAt && (
+            <>
+              <hr className="border-gray-200 my-3 border-top w-full h-[1px]" />
+              <div className="flex flex-row gap-3 text-s">
+                <div className="flex flex-row">
+                  <label className="text-gray-500 pr-1">Completed</label>
+                  <p>
+                    {new Date(
+                      props.todo.completedAt.seconds * 1000
+                    ).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </form>
       </div>
       <a
         href="#"
-        className="text-gray-300 text-xs hover:text-gray-600 px-2 py-1 hover:bg-gray-100 rounded"
+        className="text-gray-300 text-s hover:text-gray-600 px-2 py-1 hover:bg-gray-100 rounded"
         onClick={() => {
           deleteTodo.mutate({
             input: {
