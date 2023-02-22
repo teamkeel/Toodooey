@@ -88,7 +88,7 @@ const Start = (props: { setParam: (v: string) => void }) => {
           <div className="flex">
             <div className="pr-2">
               <Input
-                placeholder="e.g. http://localhost:8000/Web"
+                placeholder="e.g. http://localhost:8000/web/graphql"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />

@@ -1,6 +1,6 @@
 # Toodooey
 
-A UI for the [Keel example project](https://github.com/teamkeel?q=ex&type=all&language=&sort=). For more information follow along with our [getting started tutorial](https://keel.notaku.site/).
+A UI for the [Keel example project](https://github.com/teamkeel?q=ex&type=all&language=&sort=). For more information follow along with our [getting started tutorial](https://keel.notaku.site/getting-started/tutorial).
 
 Try it out at - https://toodooey.netlify.app/
 
