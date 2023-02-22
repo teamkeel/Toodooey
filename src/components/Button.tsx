@@ -1,14 +1,9 @@
-import { PropsWithChildren } from "react";
-
 export const Button = (
-  props: PropsWithChildren & {
-    onClick?: () => void;
-  }
+  props: React.ButtonHTMLAttributes<HTMLButtonElement>
 ) => {
   return (
-    <a
-      href="#"
-      onClick={props.onClick}
+    <button
+      {...props}
       className="
       bg-white 
       p-2 
@@ -20,6 +15,8 @@ export const Button = (
       transition-shadow 
       flex 
       items-center
+      text-center
+      justify-center
       
       active:shadow-sm 
       hover:shadow-md 
@@ -27,6 +24,6 @@ export const Button = (
       "
     >
       {props.children}
-    </a>
+    </button>
   );
 };

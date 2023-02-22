@@ -15,7 +15,7 @@
     "@tanstack/react-query-devtools": "^4.7.2",
     "autoprefixer": "^10.4.12",
     "graphql": "^16.6.0",
-    "graphql-request": "^5.0.0",
+    "graphql-request": "^4.3.0",
     "postcss": "^8.4.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -1,16 +1,22 @@
-query AllTodos {
-  allTodos {
+query AllTodos($input: AllTodosInput) {
+  allTodos(input: $input) {
     edges {
       node {
         id
         title
         description
         complete
+        project {
+          id
+          title
+        }
         createdAt {
           seconds
+          fromNow
         }
         completedAt {
           seconds
+          fromNow
         }
       }
     }

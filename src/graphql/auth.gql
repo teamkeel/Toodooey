@@ -1,0 +1,10 @@
+mutation authenticate($email: String!, $password: String!) {
+  authenticate(
+    input: {
+      emailPassword: { email: $email, password: $password }
+      createIfNotExists: true
+    }
+  ) {
+    token
+  }
+}
