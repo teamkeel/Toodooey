@@ -1,4 +1,4 @@
-mutation updateTodo($input: UpdateTodoInput!) {
+mutation updateTodo($input: updateTodo_input!) {
   updateTodo(input: $input) {
     id
     title

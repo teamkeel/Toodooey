@@ -154,9 +154,7 @@ export const Todo = (
                 <div className="flex flex-row">
                   <label className="text-gray-500 pr-1">Completed</label>
                   <p>
-                    {new Date(
-                      props.todo.completedAt.seconds * 1000
-                    ).toLocaleString()}
+                    {new Date(props.todo.completedAt.iso8601).toLocaleString()}
                   </p>
                 </div>
               </div>

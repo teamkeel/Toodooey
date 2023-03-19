@@ -1,4 +1,4 @@
-query AllTodos($input: AllTodosInput) {
+query AllTodos($input: allTodos_input) {
   allTodos(input: $input) {
     edges {
       node {
@@ -11,12 +11,10 @@ query AllTodos($input: AllTodosInput) {
           title
         }
         createdAt {
-          seconds
-          fromNow
+          iso8601
         }
         completedAt {
-          seconds
-          fromNow
+          iso8601
         }
       }
     }

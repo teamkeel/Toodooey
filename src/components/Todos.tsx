@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
 import { useState } from "react";
 import {
-  AllTodosInput,
+  AllTodos_Input,
   ListProjectsQuery,
   useAllTodosQuery,
   useCreateProjectMutation,
@@ -82,7 +82,7 @@ const Todos = (props: {
   projects?: ListProjectsQuery;
   setProject: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }) => {
-  const input: AllTodosInput = {
+  const input: AllTodos_Input = {
     first: 100,
   };
 
@@ -109,7 +109,11 @@ const Todos = (props: {
       <hr className="border-gray-200 my-3 border-top w-full h-[1px]" />
       {todos.data?.allTodos.edges
         .filter((a) => !a.node.complete)
-        .sort((a, b) => a.node.createdAt.seconds - b.node.createdAt.seconds)
+        .sort(
+          (a, b) =>
+            new Date(a.node.createdAt.iso8601).getTime() -
+            new Date(b.node.createdAt.iso8601).getTime()
+        )
         .map((d) => (
           <Todo
             client={props.client}
@@ -121,7 +125,9 @@ const Todos = (props: {
       {todos.data?.allTodos.edges
         .filter((a) => a.node.complete)
         .sort(
-          (a, b) => a.node.completedAt!.seconds - b.node.completedAt!.seconds
+          (a, b) =>
+            new Date(a.node.completedAt!.iso8601).getTime() -
+            new Date(b.node.completedAt!.iso8601).getTime()
         )
         .map((d) => (
           <Todo

@@ -1,4 +1,4 @@
-mutation setComplete($input: SetCompletionInput!) {
+mutation setComplete($input: setCompletion_input!) {
   setCompletion(input: $input) {
     id
   }

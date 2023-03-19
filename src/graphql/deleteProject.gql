@@ -1,4 +1,4 @@
-mutation deleteProject($input: DeleteProjectInput!) {
+mutation deleteProject($input: deleteProject_input!) {
   deleteProject(input: $input) {
     success
   }
