@@ -240,8 +240,12 @@ export type CreateProject_Input = {
 
 export type CreateTodo_Input = {
   description?: InputMaybe<Scalars['String']>;
-  projectId?: InputMaybe<Scalars['ID']>;
+  project?: InputMaybe<CreateTodo_Project_Input>;
   title: Scalars['String'];
+};
+
+export type CreateTodo_Project_Input = {
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 export type DeleteProject_Input = {

@@ -39,8 +39,10 @@ export const AddTask = (props: {
       create.mutate(
         {
           input: {
-            ...(values as CreateTodoMutationVariables["input"]),
-            projectId: props.activeProject,
+            ...(values as unknown as CreateTodoMutationVariables["input"]),
+            project: {
+              id: props.activeProject,
+            },
           },
         },
         {
