@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
 import { useState } from "react";
 import {
-  AllTodos_Input,
+  AllTodosInput,
   ListProjectsQuery,
   useAllTodosQuery,
   useCreateProjectMutation,
@@ -23,6 +23,7 @@ export const ListTodos = (props: { endpoint: string; token: string }) => {
   });
   const [project, setProject] = useState<string | null | undefined>(null);
 
+  console.log({ projects });
   return (
     <div className="flex-1 flex flex-col w-full max-w-3xl gap-2">
       <div className="flex flex-row my-5">
@@ -82,7 +83,7 @@ const Todos = (props: {
   projects?: ListProjectsQuery;
   setProject: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }) => {
-  const input: AllTodos_Input = {
+  const input: AllTodosInput = {
     first: 100,
   };
 

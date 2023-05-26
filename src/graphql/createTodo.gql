@@ -1,4 +1,4 @@
-mutation createTodo($input: createTodo_input!) {
+mutation createTodo($input: CreateTodoInput!) {
   createTodo(input: $input) {
     id
     title

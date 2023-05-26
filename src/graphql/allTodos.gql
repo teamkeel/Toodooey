@@ -1,4 +1,4 @@
-query AllTodos($input: allTodos_input) {
+query AllTodos($input: AllTodosInput) {
   allTodos(input: $input) {
     edges {
       node {
