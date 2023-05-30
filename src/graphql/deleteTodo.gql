@@ -1,4 +1,4 @@
-mutation deleteTodo($input: deleteTodo_input!) {
+mutation deleteTodo($input: DeleteTodoInput!) {
   deleteTodo(input: $input) {
     success
   }

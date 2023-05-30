@@ -15,6 +15,7 @@ Try it out at - https://toodooey.netlify.app/
 ### Running locally
 
 ```
+npm i
 npm run dev
 ```
 

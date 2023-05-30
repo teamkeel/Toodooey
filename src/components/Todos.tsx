@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
 import { useState } from "react";
 import {
-  AllTodos_Input,
+  AllTodosInput,
   ListProjectsQuery,
   useAllTodosQuery,
   useCreateProjectMutation,
@@ -82,7 +82,7 @@ const Todos = (props: {
   projects?: ListProjectsQuery;
   setProject: React.Dispatch<React.SetStateAction<string | null | undefined>>;
 }) => {
-  const input: AllTodos_Input = {
+  const input: AllTodosInput = {
     first: 100,
   };
 
