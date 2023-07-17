@@ -50,13 +50,18 @@ export const Todo = (
         values[key] = value as string;
       }
 
+      const { projectId, ...todoData } = values;
+
       update.mutate({
         input: {
           where: {
             id: props.todo.id,
           },
           values: {
-            ...values,
+            project: {
+              id: projectId == "none" ? null : projectId,
+            },
+            ...todoData,
           },
         },
       });
@@ -135,7 +140,7 @@ export const Todo = (
               className="pr-1 mt-1 self-center text-gray-400"
               disabled={props.todo.complete}
             >
-              <option value={undefined}>None</option>
+              <option value={"none"}>None</option>
               {props.projects?.listProjects.edges.map((p) => (
                 <option
                   selected={props.todo.project?.id == p.node.id}

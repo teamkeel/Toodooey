@@ -86,7 +86,7 @@ const Todos = (props: {
     first: 100,
   };
 
-  if (props.activeProject !== undefined) {
+  if (props.activeProject) {
     input.where = {
       project: {
         id: {
