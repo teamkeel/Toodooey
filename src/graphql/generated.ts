@@ -29,9 +29,13 @@ export type AllTodosInput = {
   where?: InputMaybe<AllTodosWhere>;
 };
 
+export type AllTodosProjectInput = {
+  id?: InputMaybe<IdQueryInput>;
+};
+
 export type AllTodosWhere = {
   complete?: InputMaybe<BooleanQueryInput>;
-  projectId?: InputMaybe<IdQueryInput>;
+  project?: InputMaybe<AllTodosProjectInput>;
 };
 
 export type AuthenticateInput = {
@@ -47,6 +51,7 @@ export type AuthenticateResponse = {
 
 export type BooleanQueryInput = {
   equals?: InputMaybe<Scalars['Boolean']>;
+  notEquals?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CreateProjectInput = {

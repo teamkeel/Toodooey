@@ -88,8 +88,10 @@ const Todos = (props: {
 
   if (props.activeProject !== undefined) {
     input.where = {
-      projectId: {
-        equals: props.activeProject,
+      project: {
+        id: {
+          equals: props.activeProject,
+        },
       },
     };
   }
